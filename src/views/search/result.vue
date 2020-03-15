@@ -1,5 +1,5 @@
 <template>
-  <div>问答</div>
+  <div>搜索结果组件</div>
 </template>
 
 <script>

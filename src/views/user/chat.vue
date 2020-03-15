@@ -1,5 +1,5 @@
 <template>
-  <div>问答</div>
+  <div>小智障</div>
 </template>
 
 <script>
