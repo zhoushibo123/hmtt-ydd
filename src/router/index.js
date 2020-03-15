@@ -9,7 +9,7 @@ const home = () => import('@/views/home') // 按需引入home 二级路由
 const video = () => import('@/views/video') // 按需引入video  二级路由
 const user = () => import('@/views/user') // 按需引入user 二级路由
 const question = () => import('@/views/question') // 按需引入问答组件二级路由
-// ----------其他一级路由
+// ----------其他一级路由------------//
 const chat = () => import('@/views/user/chat') // 小智同学
 const login = () => import('@/views/login') // 登录组件
 const profile = () => import('@/views/user/profile') // 编辑资料组件

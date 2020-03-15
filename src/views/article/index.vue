@@ -1,5 +1,12 @@
 <template>
-  <div>文章详情</div>
+     <div class="container">
+    <!-- 导航左侧有箭头 点击回到上一页 -->
+    <van-nav-bar
+  title="文章详情"
+  left-arrow
+  @click-left="$router.back()"
+/>
+  </div>
 </template>
 
 <script>
