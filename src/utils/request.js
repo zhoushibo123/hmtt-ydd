@@ -32,5 +32,20 @@ function (error) {
 // 直接返回错误
   return Promise.reject(error) // 返回抛出的错误 这样的话直接进入axios的catch中
 })
+// 在响应拦截器 处理返回结果的数据 将数据脱衣处理
+instance.interceptors.response.use(function (response) {
+// response实际已经被axios包了一层数据
+// 几乎所有的返回数据都有一层data
+  try {
+    return response.data.data // 如果成功直接返回
+  } catch (error) {
+    // 如果失败那就脱一层
+    return response.data
+  }
+},
+function (error) {
+  return Promise.reject(error)
+}
+)
 export default instance
 // 导出这个实例
