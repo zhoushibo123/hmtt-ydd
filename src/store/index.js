@@ -7,7 +7,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // 专门用来放置共享状态
-    user: auth.getUser() // 用来放置token 和refresh_token  做持久化 如果缓存中有 读取缓存中的的数据
+    user: auth.getUser() // user预设用来放置token 和refresh_token  做持久化 如果缓存中有 读取缓存中的的数据
 
   },
   mutations: {
