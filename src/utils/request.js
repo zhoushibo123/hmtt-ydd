@@ -112,7 +112,7 @@ async function (error) {
       router.push(path)// 调用封装好的path
     }
   }
-  return Promise.reject(error)
+  return Promise.reject(error)// 返回错误 正样的话能被axios的catch捕获到
 }
 )
 export default instance
