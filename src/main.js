@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import '@/permission'// 完成拦截模式
 import store from './store'
 
 import Vant from 'vant' // 引入vant
