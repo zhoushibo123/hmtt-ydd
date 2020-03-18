@@ -5,7 +5,7 @@ import '@/permission'// 完成拦截模式
 import store from './store'
 
 import Vant from 'vant' // 引入vant
-import plugin from '@/utils/plugin' // 引入插件
+import plugin from '@/utils/plugin' // 引入插件 放在vant后因为需要用vant的内置函数
 // import 'vant/lib/index.css' // vant 样式
 import 'vant/lib/index.less' // 引入 vant 样式 这里改成less 因为我们想要修改变量
 import '@/styles/index.less' // 引入全局的自定义样式  因为要覆盖vant的样式

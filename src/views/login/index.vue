@@ -108,8 +108,8 @@ export default {
         } catch (error) {
           // 失败时执行 提示用户 登陆失败
           // console.log('登录失败')
-          console.log(error)
-          this.$notify({ message: '用户名或者验证码错误' + error.message })
+          // console.log(error)
+          this.$znotify({ message: '用户名或者验证码错误' })
         }
       }
     }
