@@ -22,15 +22,13 @@ const instance = axios.create({
 // 在请求拦截器里注册统一的token
 //  instance是一个新的axios实例
 instance.interceptors.request.use(function (config) {
-  // 成功时执行第一个参数   会有一个config就是所有的axios的请求信息
-// 在第一个函数中 需要将配置进行返回  返回的配置 会作为请求参数进行请求
 // 成功的时候 如何处理
 // 读取配置信息 在配置信息中存入token
 
   if (store.state.user.token) {
     config.headers.Authorization = `Bearer ${store.state.user.token}`
+    return config // 返回配置项
   }
-  return config // 返回配置项
 },
 function (error) {
 // 直接返回错误

@@ -29,14 +29,14 @@
 
 <script>
 import { login } from '@/api/user' // 引入login方法
-import { mapMutations } from 'vuex'// 辅助函数
+import { mapMutations } from 'vuex'// 辅助函数 可以把mutations方法映射到methods方法中
 export default {
   data () {
     return {
       // 做数据校验 要完成数据的双向绑定
       loginForm: {
         mobile: '13911111111', // 手机号
-        code: '246810'// 验证码
+        code: '246810' // 验证码
       },
       // 此对象专门放置校验提示消息
       errorMessage: {
@@ -82,19 +82,35 @@ export default {
       return true
     },
     // 手动校验整体校验
-    async login () {
-      // 检验手机号和验证码调用两个方法即可
+    async  login () {
+      //  校验手机号和验证码
       const validateMobile = this.checkMobile()
       const validateCode = this.checkCode()
       if (validateMobile && validateCode) {
-        // 如果两个检查都是true 就表示通过校验
-        console.log('登录成功')
-        // 调用接口
-        const result = await login(this.loginForm)// 传递参数 mobile  code
-        // result 中就是token和refresh_token 设置给vuex中state
-        this.updateUser({ user: result })// 相当与更新当前的token和refresh_token
-      // 应该跳转到主页 但是如果这个请求是别人401之后跳转过来的，就应该返回到原来界面
-      // 1判断是否有需要跳转的页面有就跳转 没有就直接跳主页
+        console.log('校验通过')
+
+        // 如果两个检查都是true 就表示通过 了校验
+        // 校验通过之后 要去调用接口 看看用户名和密码正确与否
+        // axios 但是后端接口 不论你成功或者失败 它返回的状态码都是200
+        try {
+          const result = await login(this.loginForm)
+          // 后端 现在把所有手机号 都认为是成功
+          console.log(result) // 打印结果
+          // 拿到token之后 应该把token设置vuex中的state
+          // 要去修改vuex中的state必须通过 mutations
+          // this.$store.commit('')  // 原始方式
+          this.updateUser({ user: result }) // 相当于更新当前的token 和 refresh_token
+          // 应该跳转到主页 but 如果此时 你这个登录 是 别人401之后跳转过来的 你就应该回到那个跳转过来的页面
+          // 1 判断是否有需要跳转的页面 如果有 就跳转 如果没有 不用管 直接跳到主页
+          const { redirectUrl } = this.$route.query // query查询参数 也就是 ?后边的参数表
+          // redirectUrl有值的话 跳到该地址 没值的话 跳到 主页
+          this.$router.push(redirectUrl || '/') // 短路表达式
+        } catch (error) {
+          // 失败时执行 提示用户 登陆失败
+          // console.log('登录失败')
+          console.log(error)
+          this.$notify({ message: '用户名或者验证码错误' + error.message })
+        }
       }
     }
   }
