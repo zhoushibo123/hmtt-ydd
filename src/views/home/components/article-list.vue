@@ -1,11 +1,21 @@
 <template>
+ <!-- 文章列表组件  放置列表 -->
+  <!-- van-list 可以帮助我们实现上拉加载  需要一些变量 -->
+  <!-- 这里放置这个div的目的是 形成滚动条, 因为我们后期要做 阅读记忆 -->
+  <!-- 阅读记忆  上次你阅读到哪  回来之后还是哪-->
+  <div class="scroll-wrapper">
+    <!-- 文章列表 -->
+    <!-- van-list组件 如果不加干涉, 初始化完毕 就会检测 自己距离底部的长度,如果超过了限定 ,就会执行 load事件  自动把
+       绑定的 loading 变成true
+    -->
+    <!-- 下拉刷新组件包裹 列表组件 -->
       <van-pull-refresh v-model="downLoading" @refresh='onRefresh' :success-text='successText'>
         <!--refresh是监听下拉刷新的事件 success-text是提示信息 -->
         <!-- v-model绑定的值就是value -->
          <van-list finished-text="没有数据了" v-model="upLoading" :finished="finished" @load="onLoad">
       <!-- 循环内容 -->
         <van-cell-group>
-          <van-cell v-for="item in articles" :key="item">
+          <van-cell v-for="item in articles" :key="item.art_id">
             <!-- 放置元素 文章列表的循环项  无图  单图  三图 -->
             <div class="article_item">
               <!-- 标题 -->
@@ -36,11 +46,12 @@
         </van-cell-group>
     </van-list>
       </van-pull-refresh>
-
+</div>
 </template>
 
 <script>
-// import { getArticles } from '@/api/articles'
+// 引入获取文章模块
+import { getArticles } from '@/api/articles'
 export default {
   data () {
     return {
@@ -64,20 +75,20 @@ export default {
   methods: {
     // onload是自动执行的 有检测高度机制
     // 上拉加载方法
-    onLoad () {
-      console.log('开始加载数据')
+    async onLoad () {
+      console.log('开始加载列表数据')
       // 如果你的数据已经加载完毕你应该把finished设置为true  表示一切结束不在请求
       // 此时强制判断总条数 如果超过50条就直接关闭
       // van-list组件第一次加载 需要让list组件出现滚动条 不然没法继续往下
-      if (this.articles.length > 50) {
-        this.finished = true// 关闭加载
-      } else {
-        const arr = Array.from(Array(15), (value, index) => this.articles.length + index + 1)
-        // 上拉加载不是重新覆盖之前的数据
-        this.articles.push(...arr)
-        // 添加完数据需要手动关闭upLoading
-        this.upLoading = false
-      }
+      // if (this.articles.length > 50) {
+      //   this.finished = true// 关闭加载
+      // } else {
+      //   const arr = Array.from(Array(15), (value, index) => this.articles.length + index + 1)
+      //   // 上拉加载不是重新覆盖之前的数据
+      //   this.articles.push(...arr)
+      //   // 添加完数据需要手动关闭upLoading
+      //   this.upLoading = false
+      // }
 
       // 下面这么写 依然不能关掉加载状态 为什么 ? 因为关掉之后  检测机制  高度还是不够 还是会开启
       // 如果你有数据 你应该 把数据到加到list中
@@ -85,6 +96,22 @@ export default {
       // setTimeout(() => {
       //   this.finished = true // 表示 数据已经全部加载完毕 没有数据了
       // }, 1000) // 等待一秒 然后关闭加载状态
+      // -------------------
+      //  this.channel_id当前的频道id
+      // this.timestamp || Date.now() 如果有六十时间戳就用历史时间戳 没有就用当前的时间戳
+      const data = await getArticles({ channel_id: this.channel_id, timestamp: this.timestamp || Date.now() })
+      // 获取数据
+      this.articles.push(...data.results)// 将数据追加到队尾
+      this.upLoading = false// 关闭加载状态
+      // 需要将历史时间戳给timestamp  但是 赋值之前有个判断  需要判断一下历史时间戳是否为0
+      // 如果历史时间戳为0 说明已经没有数据了  finished =true
+      if (data.pre_timestamp) {
+        // r如果有历史时间戳 说明还有数据可以进行加载
+        this.timestamp = data.pre_timestamp
+      } else {
+        // 表示没有数据了 到底了
+        this.finished = true // 手动关闭
+      }
     },
     onRefresh () {
       setTimeout(() => {
