@@ -1,26 +1,42 @@
 <template>
-  <!-- 文章列表组件  放置列表 -->
-  <!-- van-list 可以帮助我们实现上拉加载  需要一些变量 -->
-  <!-- 这里放置这个div的目的是 形成滚动条, 因为我们后期要做 阅读记忆 -->
-  <!-- 阅读记忆  上次你阅读到哪  回来之后还是哪-->
-  <div class="scroll-wrapper">
-      <!-- 文章列表 -->
-      <!-- van-list组件 如果不加干涉, 初始化完毕 就会检测 自己距离底部的长度,如果超过了限定 ,就会执行 load事件  自动把
-       绑定的 loading 变成true
-      -->
-      <!-- 下拉刷新组件包裹列表组件 refresh事件监听方法下拉刷新时触发success-text更新后提示文本 -->
       <van-pull-refresh v-model="downLoading" @refresh='onRefresh' :success-text='successText'>
+        <!--refresh是监听下拉刷新的事件 success-text是提示信息 -->
         <!-- v-model绑定的值就是value -->
          <van-list finished-text="没有数据了" v-model="upLoading" :finished="finished" @load="onLoad">
       <!-- 循环内容 -->
-      <van-cell-group>
-    <van-cell title="name" :value="'张三' + item " v-for="item in articles" :key="item"></van-cell>
-      </van-cell-group>
+        <van-cell-group>
+          <van-cell v-for="item in articles" :key="item">
+            <!-- 放置元素 文章列表的循环项  无图  单图  三图 -->
+            <div class="article_item">
+              <!-- 标题 -->
+              <h3 class="van-ellipsis">沉舟侧畔千帆过，病树前头万木春</h3>
+              <!-- 三图图片 -->
+              <div class="img_box">
+                <!-- 图片组件用的是 vant的组件库中的图片组件 需要使用该组件 进行图片的懒加载 -->
 
+                <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+              </div>
+              <!-- 单图 暂时隐藏掉单图-->
+               <!-- <div class="img_box">
+                <van-image class="w100" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+              </div> -->
+              <!-- 作者信息 -->
+              <div class="info_box">
+                <span>你像一阵风</span>
+                <span>8评论</span>
+                <span>10分钟前</span>
+                <span class="close">
+                  <van-icon name="cross"></van-icon>
+                </span>
+              </div>
+            </div>
+          </van-cell>
+        </van-cell-group>
     </van-list>
       </van-pull-refresh>
 
-  </div>
 </template>
 
 <script>
@@ -76,6 +92,45 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang='less' scoped>
+.article_item{
+  h3{
+    font-weight: normal;
+    line-height: 2;
+  }
+  .img_box{
+    display: flex;
+    justify-content: space-between;
+    .w33{
+      width: 33%;
+      height: 90px;
+    }
+    .w100{
+      width: 100%;
+      height: 180px;
+    }
+  }
+  .info_box{
+    color: #999;
+    line-height: 2;
+    position: relative;
+    font-size: 12px;
+    span{
+      padding-right: 10px;
+      &.close{
+        border: 1px solid #ddd;
+        border-radius: 2px;
+        line-height: 15px;
+        height: 12px;
+        width: 16px;
+        text-align: center;
+        padding-right: 0;
+        font-size: 8px;
+        position: absolute;
+        right: 0;
+        top: 7px;
+      }
+    }
+  }
+}
 </style>
