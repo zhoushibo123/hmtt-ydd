@@ -100,6 +100,7 @@ export default {
       // }, 1000) // 等待一秒 然后关闭加载状态
       // -------------------
       //  this.channel_id当前的频道id
+      await this.$sleep()// 人为控制了请求的时间
       // this.timestamp || Date.now() 如果有六十时间戳就用历史时间戳 没有就用当前的时间戳
       const data = await getArticles({ channel_id: this.channel_id, timestamp: this.timestamp || Date.now() })
       // 获取数据
@@ -117,6 +118,7 @@ export default {
     },
     // 下拉刷新方法
     async  onRefresh () {
+      await this.$sleep()// 人为控制了请求的时间
       // setTimeout(() => {
       //   // 下拉刷新方法
       // // 下拉刷新 表示要读取最新的数据 而且要添加到数组的头部
