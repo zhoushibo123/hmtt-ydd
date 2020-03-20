@@ -47,7 +47,7 @@
                 <!-- <span class="close" v-if="$store.state.user.token"> -->
                   <!-- 辅助函数形式 -->
                   <!-- 点击叉号显示弹层 在子组件article-list中点击叉号 在父组件index中的弹层显示 -->
-                  <span @click="$emit('ShowArticle')" class="close" v-if="user.token">
+                  <span @click="$emit('ShowArticle',item.art_id.toString())" class="close" v-if="user.token">
                   <van-icon name="cross"></van-icon>
                 </span>
               </div>

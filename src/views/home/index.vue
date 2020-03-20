@@ -44,14 +44,18 @@ export default {
   data () {
     return {
       channels: [], // 接受频道的数据
-      showMoreAction: false // 是否弹层 默认不显示弹层
+      showMoreAction: false, // 是否弹层 默认不显示弹层
+      articleId: null// 用来接收article-list传进来的文章id
     }
   },
   methods: {
-    openAction () {
+    openAction (artId) {
       // 此方法在article-lis组件触发ShowArticle时触发
       // 弹出弹窗
       this.showMoreAction = true
+      // alert(artId)
+      // 将id存到data变量里
+      this.articleId = artId
     },
     async getMyChannels () {
       const data = await getMyChannels() // data是接受返回的数据结果
