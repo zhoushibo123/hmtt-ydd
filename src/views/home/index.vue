@@ -1,7 +1,8 @@
 <template>
   <div class="container">
       <!-- 放置tabs组件 -->
-      <van-tabs>
+      <!-- v-model绑定当前激活的页签 -->
+      <van-tabs v-model="activeIndex">
          <!-- 内部需要放置子 标签  title值为当前显示的内容-->
          <!-- van-tab是vant组件的样式  -->
          <van-tab :title="item.name" v-for="item in channels" :key="item.id">
@@ -38,6 +39,7 @@ import ArticleList from './components/article-list'// 文章列表组件
 import MoreAction from './components/more-action' // 引入反馈弹层组件
 import { getMyChannels } from '@/api/channels'
 import { dislikeArticle } from '@/api/articles'// 调用不感兴趣接口方法
+import eventbus from '@/utils/eventbus'// 公共事件处理器
 export default {
   name: 'Home',
   components: {
@@ -47,7 +49,8 @@ export default {
     return {
       channels: [], // 接受频道的数据
       showMoreAction: false, // 是否弹层 默认不显示弹层
-      articleId: null// 用来接收article-list传进来的文章id
+      articleId: null, // 用来接收article-list传进来的文章id
+      activeIndex: 0// 当前频道对应的索引
     }
   },
   methods: {
@@ -72,6 +75,12 @@ export default {
           type: 'success',
           message: '操作失败'
         })
+        // 还应该利用事件广播的机制 通知对应的tabs删除对应的数据
+        eventbus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)// 要传递对应的文章id
+        // 还要告诉监听事件得人当前这篇文章属于哪个频道 可以传递当前频道id
+        // this.channels[activeIndex].id 当前频道id
+        // 监听了这个事件的组件根据id删除文章
+        this.showMoreAction = false// 关闭弹层
       } catch (error) {
         this.$znotify({
           type: 'success',

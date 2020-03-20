@@ -63,7 +63,34 @@
 // 引入获取文章模块
 import { getArticles } from '@/api/articles'
 import { mapState } from 'vuex'// 引入辅助函数
+import eventBus from '@/utils/eventbus'
 export default {
+  // 初始化函数
+  created () {
+    // 监听触发的delArticle事件
+    // 相当于有多少实例就监听多少次
+    // delArticle=>假如有四个实例 就执行四次
+    // artId, channelId 对应传递的this.articleId, this.channels[this.activeIndex].id
+    // 一个是不喜欢文章的id 另一个是这篇文祥在对应频道的id
+    eventBus.$on('delArticle', (artId, channelId) => {
+      // 这个位置 每个组件实例都会触发
+      // 判断一下 传过来的频道id是否和自己props传过来的id相等
+      if (channelId === this.channel_id) {
+        // 说明就是我们要操作的article-list实例 就可以删除
+        const index = this.articles.findIndex(item => item.art_id.toString() === artId)
+        // 通过id查询到对应文章的索引
+        if (index > -1) {
+          // 因为下标从0开始 所以要大于-1
+          this.articles.splice(index, 1)// 删除对应下标的数据
+        }
+        // 但是 如果你一直删除 就会将 列表数据都删光 并不会触发 load事件
+        if (this.articles.length === 0) {
+          //  说明你把数据给删光了
+          this.onLoad() // 手动的触发onload事件 给页面加数据
+        }
+      }
+    })
+  },
   data () {
     return {
       successText: '', // 刷新成功的文本
