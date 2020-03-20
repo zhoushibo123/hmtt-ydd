@@ -42,7 +42,12 @@
                 <!-- 使用过滤器 -->
                 <!-- <span>{{item.pubdate}}</span> -->
                 <span>{{item.pubdate | relTime}}</span>
-                <span class="close">
+                <!-- 此叉号需要通过是否有token来决定显示还是隐藏 -->
+                <!-- 原始方式 -->
+                <!-- <span class="close" v-if="$store.state.user.token"> -->
+                  <!-- 辅助函数形式 -->
+                  <!-- 点击叉号显示弹层 在子组件article-list中点击叉号 在父组件index中的弹层显示 -->
+                  <span @click="$emit('ShowArticle')" class="close" v-if="user.token">
                   <van-icon name="cross"></van-icon>
                 </span>
               </div>
@@ -57,6 +62,7 @@
 <script>
 // 引入获取文章模块
 import { getArticles } from '@/api/articles'
+import { mapState } from 'vuex'// 引入辅助函数
 export default {
   data () {
     return {
@@ -67,6 +73,9 @@ export default {
       articles: [], // 文章列表
       timestamp: null// 定义一个 timestamp属性,用来存放时间戳
     }
+  },
+  computed: {
+    ...mapState(['user'])// 将vuex中的 user对象映射到计算属性中
   },
   props: {
     // props 对象形式 可以约束传入的值 必填 传值类型

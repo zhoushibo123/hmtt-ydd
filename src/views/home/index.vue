@@ -14,7 +14,8 @@
             </div> -->
             <!-- 有多少个tab 就有多少个 article-list  相当于多个article-list实例-->
              <!-- channel_i通过父子传值 props -->
-             <ArticleList :channel_id='item.id'></ArticleList>
+             <!-- 父组件中监听自定义事件弹出显示层 -->
+             <ArticleList @ShowArticle="openAction" :channel_id='item.id'></ArticleList>
          </van-tab>
       </van-tabs>
       <!-- 在tabs下放置图标  编辑频道的图标 -->
@@ -22,23 +23,36 @@
         <!-- 放入图标 vant图标 -->
          <van-icon name='wap-nav'></van-icon>
       </span>
+      <!-- 放置组件标签van-popup弹层组件 -->
+      <van-popup style="width:80%" v-model="showMoreAction">
+        <!-- 放置反馈组件 -->
+      <MoreAction />
+      </van-popup>
+
   </div>
 </template>
 
 <script>
-import ArticleList from './components/article-list'
+import ArticleList from './components/article-list'// 文章列表组件
+import MoreAction from './components/more-action' // 引入反馈弹层组件
 import { getMyChannels } from '@/api/channels'
 export default {
   name: 'Home',
   components: {
-    ArticleList
+    ArticleList, MoreAction
   },
   data () {
     return {
-      channels: []// 接受频道的数据
+      channels: [], // 接受频道的数据
+      showMoreAction: false // 是否弹层 默认不显示弹层
     }
   },
   methods: {
+    openAction () {
+      // 此方法在article-lis组件触发ShowArticle时触发
+      // 弹出弹窗
+      this.showMoreAction = true
+    },
     async getMyChannels () {
       const data = await getMyChannels() // data是接受返回的数据结果
       this.channels = data.channels // 将返回数据中的channels赋值给 channels数组
