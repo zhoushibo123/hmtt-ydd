@@ -4,7 +4,9 @@
       <!-- 单元格组1 -->
       <!-- v-if v-else 前边满足前边显示 前边不满足后边显示 -->
     <van-cell-group v-if="!isReport">
-      <van-cell>不感兴趣</van-cell>
+        <!-- 点击不感兴趣调用不感兴趣接口 也需要自定义事件 往父组件传递不喜欢的文章id -->
+      <!-- 实际上是调用父组件的方法 -->
+      <van-cell @click="$emit('dislike')">不感兴趣</van-cell>
       <van-cell is-link @click="isReport=true">反馈垃圾内容</van-cell>
       <van-cell>拉黑作者</van-cell>
     </van-cell-group>

@@ -26,7 +26,8 @@
       <!-- 放置组件标签van-popup弹层组件 -->
       <van-popup style="width:80%" v-model="showMoreAction">
         <!-- 放置反馈组件 -->
-      <MoreAction />
+        <!-- 监听子组件的自定义事件 -->
+      <MoreAction @dislike="dislikeArticle" />
       </van-popup>
 
   </div>
@@ -36,6 +37,7 @@
 import ArticleList from './components/article-list'// 文章列表组件
 import MoreAction from './components/more-action' // 引入反馈弹层组件
 import { getMyChannels } from '@/api/channels'
+import { dislikeArticle } from '@/api/articles'// 调用不感兴趣接口方法
 export default {
   name: 'Home',
   components: {
@@ -56,6 +58,26 @@ export default {
       // alert(artId)
       // 将id存到data变量里
       this.articleId = artId
+    },
+    // 在more-action组件触发dislike时触发不感兴趣这个方法
+    async dislikeArticle () {
+      // alert(2)
+      // 调用不感兴趣接口
+      try {
+        await dislikeArticle({
+          target: this.articleId// 不感兴趣文章的id
+          // await下方的逻辑 是 resolve(成功)之后 的执行
+        })
+        this.$znotify({
+          type: 'success',
+          message: '操作失败'
+        })
+      } catch (error) {
+        this.$znotify({
+          type: 'success',
+          message: '操作失败'
+        })
+      }
     },
     async getMyChannels () {
       const data = await getMyChannels() // data是接受返回的数据结果

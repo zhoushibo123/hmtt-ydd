@@ -13,3 +13,12 @@ export function getArticles (params) {
     }// 合并数据3个参数  with_top: 1写死  channel_id通过父子传值
   })
 }
+
+// 不感兴趣的文章接口方法
+export function dislikeArticle (data) {
+  return request({
+    url: '/article/dislikes',
+    method: 'post',
+    data// es6
+  })
+}
