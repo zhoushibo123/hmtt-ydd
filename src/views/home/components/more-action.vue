@@ -13,12 +13,15 @@
       <!-- 单元格组2 -->
     <van-cell-group v-else>
       <van-cell icon="arrow-left" @click="isReport=false">返回</van-cell>
-      <van-cell icon="info-o" v-for="item in reports" :key="item.value">{{item.label}}</van-cell>
+        <!-- 注册举报项的垃圾事件 -->
+        <!-- 自定义事件还需要传对应的type 抛出了item.value -->
+      <van-cell @click="$emit('report',item.value)" icon="info-o" v-for="item in reports" :key="item.value">{{item.label}}</van-cell>
     </van-cell-group>
   </div>
 </template>
 
 <script>
+import eventBus from '@/utils/eventbus'
 import { reports } from '@/api/constants'// 引入常量变量
 export default {
   data () {
@@ -26,6 +29,10 @@ export default {
       isReport: false, // 是否举报反馈垃圾内容
       reports// 相当于定义一个reports变量来源于 constants中的常量reports
     }
+  },
+  created () {
+    //  一初始化就要开始监听
+    eventBus.$on('delArticle', () => (this.isReport = false)) // 只要你一开始删除 我就把弹层中反馈组件重置为初始状态
   }
 }
 </script>

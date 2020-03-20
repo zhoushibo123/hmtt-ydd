@@ -28,7 +28,11 @@
       <van-popup style="width:80%" v-model="showMoreAction">
         <!-- 放置反馈组件 -->
         <!-- 监听子组件的自定义事件 -->
-      <MoreAction @dislike="dislikeArticle" />
+        <!-- 不喜欢文章和举报文章用一个方法 -->
+        <!-- @事件名=方法名（$event,参数） -->
+        <!-- $event是事件参数 在h5中是事件参数 在自定义事件中就是自定义事件传出的第一个参数 -->
+      <MoreAction @dislike="dislikeOrReport('dislike')"  @report="dislikeOrReport('report',$event)"   />
+      <!-- <MoreAction @dislike="dislikeOrReport('dislike')"  @report="dislikeOrReport('report',$event)" /> -->
       </van-popup>
 
   </div>
@@ -38,7 +42,7 @@
 import ArticleList from './components/article-list'// 文章列表组件
 import MoreAction from './components/more-action' // 引入反馈弹层组件
 import { getMyChannels } from '@/api/channels'
-import { dislikeArticle } from '@/api/articles'// 调用不感兴趣接口方法
+import { dislikeArticle, reportArticle } from '@/api/articles'// 调用不感兴趣接口方法和举报文章方法
 import eventbus from '@/utils/eventbus'// 公共事件处理器
 export default {
   name: 'Home',
@@ -63,17 +67,23 @@ export default {
       this.articleId = artId
     },
     // 在more-action组件触发dislike时触发不感兴趣这个方法
-    async dislikeArticle () {
+    async dislikeOrReport (operateType, type) {
+      // alert(type)
       // alert(2)
       // 调用不感兴趣接口
       try {
-        await dislikeArticle({
+        // 两个方法合并 需要一个参数来判断
+        // operateType是操作类型 如果是dislike就是不喜欢  如果是report就是举报文章
+        operateType === 'dislike' ? await dislikeArticle({
           target: this.articleId// 不感兴趣文章的id
           // await下方的逻辑 是 resolve(成功)之后 的执行
+        }) : await reportArticle({
+          target: this.articleId,
+          type// 这里type通过$event传出来
         })
         this.$znotify({
           type: 'success',
-          message: '操作失败'
+          message: '操作成功'
         })
         // 还应该利用事件广播的机制 通知对应的tabs删除对应的数据
         eventbus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)// 要传递对应的文章id
@@ -83,11 +93,29 @@ export default {
         this.showMoreAction = false// 关闭弹层
       } catch (error) {
         this.$znotify({
-          type: 'success',
           message: '操作失败'
         })
       }
     },
+    // 举报文章的方法
+    // async reportArticle (type) {
+    //   try {
+    //     // 调用接口
+    //     await reportArticle({
+    //       target: this.articleId,
+    //       type
+    //     })
+    //     // 举报成功在await下方执行
+    //     eventbus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)// 要传递对应的文章id
+    //     this.showMoreAction = false// 关闭弹层
+    //   } catch (error) {
+    //     // 失败之后
+    //     this.$znotify({
+    //       type: 'success',
+    //       message: '操作失败'
+    //     })
+    //   }
+    // },
     async getMyChannels () {
       const data = await getMyChannels() // data是接受返回的数据结果
       this.channels = data.channels // 将返回数据中的channels赋值给 channels数组
