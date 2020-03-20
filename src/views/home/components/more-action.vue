@@ -13,22 +13,18 @@
       <!-- 单元格组2 -->
     <van-cell-group v-else>
       <van-cell icon="arrow-left" @click="isReport=false">返回</van-cell>
-      <van-cell>侵权</van-cell>
-      <van-cell>色情</van-cell>
-      <van-cell>暴力</van-cell>
-      <van-cell>低俗</van-cell>
-      <van-cell>不适</van-cell>
-      <van-cell>错误</van-cell>
-      <van-cell>其他</van-cell>
+      <van-cell icon="info-o" v-for="item in reports" :key="item.value">{{item.label}}</van-cell>
     </van-cell-group>
   </div>
 </template>
 
 <script>
+import { reports } from '@/api/constants'// 引入常量变量
 export default {
   data () {
     return {
-      isReport: false// 是否举报反馈垃圾内容
+      isReport: false, // 是否举报反馈垃圾内容
+      reports// 相当于定义一个reports变量来源于 constants中的常量reports
     }
   }
 }
