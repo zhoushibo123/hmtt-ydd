@@ -39,7 +39,8 @@
   <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
     <!-- 频道编辑组件 -->
     <!-- 因为我的频道 的数据在父组件上 所以要父子传值给编辑频道组件 -->
-    <ChannelEdit :channels='channels' @selectChannel='selectChannel'>
+    <!-- 传递activeIndex改变当前页前颜色 -->
+    <ChannelEdit :activeIndex='activeIndex' :channels='channels' @selectChannel='selectChannel'>
 
     </ChannelEdit>
   </van-action-sheet>
