@@ -30,7 +30,7 @@
       <van-grid class="van-hairline--left">
         <van-grid-item v-for="item in optionalChannels" :key="item.id">
           <span class="f12">{{item.name}}</span>
-
+            <!-- 点击加号触发点击事件并且传出一个频道对象{} -->
           <van-icon  @click="$emit('addChannel', item)" class="btn" name="plus"></van-icon>
         </van-grid-item>
       </van-grid>

@@ -40,7 +40,7 @@
     <!-- 频道编辑组件 -->
     <!-- 因为我的频道 的数据在父组件上 所以要父子传值给编辑频道组件 -->
     <!-- 传递activeIndex改变当前页前颜色 -->
-    <ChannelEdit @delChannel='delChannel'  :activeIndex='activeIndex' :channels='channels' @selectChannel='selectChannel'>
+    <ChannelEdit @addChannel="addChannel" @delChannel='delChannel'  :activeIndex='activeIndex' :channels='channels' @selectChannel='selectChannel'>
 
     </ChannelEdit>
   </van-action-sheet>
@@ -50,7 +50,7 @@
 <script>
 import ArticleList from './components/article-list'// 文章列表组件
 import MoreAction from './components/more-action' // 引入反馈弹层组件
-import { getMyChannels, delChannel } from '@/api/channels'
+import { getMyChannels, delChannel, addChannel } from '@/api/channels'
 import { dislikeArticle, reportArticle } from '@/api/articles'// 调用不感兴趣接口方法和举报文章方法
 import eventbus from '@/utils/eventbus'// 公共事件处理器
 import ChannelEdit from './components/channel-edit'// 引入编辑频道组件
@@ -69,6 +69,14 @@ export default {
     }
   },
   methods: {
+    async  addChannel (channel) {
+      // 添加频道的方法 触发子组件addChannel事件时触发
+      // 调接口
+      await addChannel(channel)// 传入参数写入缓存
+
+      // 成功之后将该频道缓存然后添加到data数据中心
+      this.channels.push(channel)// 自身加一个频道 通过props影响子组件
+    },
     async delChannel (id) {
       // 当子组件触发delChannel删除事件时 触发
       // alert(id)
