@@ -23,9 +23,10 @@
         可选频道＝全部频道-我的频道
          -->
          <!-- 循环部分 -->
+         <!-- 相当于一个全部数据大数组减去一个我的频道的小数组 -->
       <div class="tit">可选频道：</div>
       <van-grid class="van-hairline--left">
-        <van-grid-item v-for="item in channels" :key="item.id">
+        <van-grid-item v-for="item in optionalChannels" :key="item.id">
           <span class="f12">{{item.name}}</span>
 
           <van-icon class="btn" name="plus"></van-icon>
@@ -36,10 +37,12 @@
 </template>
 
 <script>
+import { getAllChannels } from '@/api/channels'// 获取所有频道的方法
 export default {
   data () {
     return {
-      editing: false// 用这个状态来控制是否显示删除图标
+      editing: false, // 用这个状态来控制是否显示删除图标
+      allChannels: []// 用来接收所有频道的数据
     }
   },
   props: {
@@ -49,6 +52,23 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+  methods: {
+    async  getAllChannels () {
+      const data = await getAllChannels()
+      // await 成功之后执行  把后端数据赋值给allChannels变量
+      this.allChannels = data.channels
+    }
+  },
+  computed: {
+    //   为什么要用计算属性? 可选频道 其实是一个动态的结果  全部数据(data) - 用户频道(props) => 重新计算频道数据 => 缓存
+    //   可选频道 计算属性必须要求有返回值
+    optionalChannels () {
+      return this.allChannels.filter(item => !this.channels.some(o => o.id === item.id))
+    }
+  },
+  created () {
+    this.getAllChannels()// 调用获取全部频道的数据
   }
 }
 </script>
