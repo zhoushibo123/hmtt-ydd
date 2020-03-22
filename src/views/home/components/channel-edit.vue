@@ -10,9 +10,10 @@
       </div>
       <van-grid class="van-hairline--left">
           <!-- 我的频道的循环选项 -->
-        <van-grid-item v-for="index in 8" :key="index">
-          <span class="f12">频道{{index}}</span>
-          <van-icon class="btn" name="cross"></van-icon>
+        <van-grid-item v-for="(item,index) in channels" :key="item.id">
+          <span class="f12">{{item.name}}</span>
+             <!-- 在编辑模式显示叉号 v-if  第一个推荐频道不能删除 依靠索引来判断 因为第一个永远不显示叉号-->
+          <van-icon v-if="index!==0 && editing" class="btn" name="cross"></van-icon>
         </van-grid-item>
       </van-grid>
     </div>
@@ -21,10 +22,12 @@
         <!-- 我的频道的数据 是当前用户自己的数据（在登陆情况下自己的频道 或者游客模式下自己的频道）
         可选频道＝全部频道-我的频道
          -->
+         <!-- 循环部分 -->
       <div class="tit">可选频道：</div>
       <van-grid class="van-hairline--left">
-        <van-grid-item v-for="index in 8" :key="index">
-          <span class="f12">频道{{index}}</span>
+        <van-grid-item v-for="item in channels" :key="item.id">
+          <span class="f12">{{item.name}}</span>
+
           <van-icon class="btn" name="plus"></van-icon>
         </van-grid-item>
       </van-grid>
@@ -37,6 +40,14 @@ export default {
   data () {
     return {
       editing: false// 用这个状态来控制是否显示删除图标
+    }
+  },
+  props: {
+    //   props对象形式传值
+    channels: {
+      required: true,
+      type: Array,
+      default: () => []
     }
   }
 }

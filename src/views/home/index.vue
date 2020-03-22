@@ -38,7 +38,8 @@
   <!-- 频道编辑组件放在弹出面板的组件title标题 round是否显示圆角v-bin动态绑定 -->
   <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
     <!-- 频道编辑组件 -->
-    <ChannelEdit>
+    <!-- 因为我的频道 的数据在父组件上 所以要父子传值给编辑频道组件 -->
+    <ChannelEdit :channels='channels'>
 
     </ChannelEdit>
   </van-action-sheet>
