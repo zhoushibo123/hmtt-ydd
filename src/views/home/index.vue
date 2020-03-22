@@ -39,7 +39,7 @@
   <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
     <!-- 频道编辑组件 -->
     <!-- 因为我的频道 的数据在父组件上 所以要父子传值给编辑频道组件 -->
-    <ChannelEdit :channels='channels'>
+    <ChannelEdit :channels='channels' @selectChannel='selectChannel'>
 
     </ChannelEdit>
   </van-action-sheet>
@@ -68,6 +68,13 @@ export default {
     }
   },
   methods: {
+    selectChannel (index) {
+      // 当子组件触发selectChannel事件时 触发
+      // alert(id)
+      // 拿到索引后 激活对应的页签tabs
+      this.activeIndex = index // 激活页签
+      this.showChannelEdit = false
+    },
     openAction (artId) {
       // 此方法在article-lis组件触发ShowArticle时触发
       // 弹出弹窗

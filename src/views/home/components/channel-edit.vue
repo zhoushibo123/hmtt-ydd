@@ -11,7 +11,9 @@
       <van-grid class="van-hairline--left">
           <!-- 我的频道的循环选项 -->
         <van-grid-item v-for="(item,index) in channels" :key="item.id">
-          <span class="f12">{{item.name}}</span>
+            <!-- 这个功能 需要注册我的频道的点击事件,将点击的频道id传给 父组件,父组件根据id找到对应的索引,切换tab页索引到对应的tab页下首先点击频道触发自定义事件 -->
+            <!-- selectChannel自定义事件名 传递点击频道的id -->
+          <span @click="$emit('selectChannel',index)" class="f12">{{item.name}}</span>
              <!-- 在编辑模式显示叉号 v-if  第一个推荐频道不能删除 依靠索引来判断 因为第一个永远不显示叉号-->
           <van-icon v-if="index!==0 && editing" class="btn" name="cross"></van-icon>
         </van-grid-item>
