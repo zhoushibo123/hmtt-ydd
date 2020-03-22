@@ -40,7 +40,7 @@
     <!-- 频道编辑组件 -->
     <!-- 因为我的频道 的数据在父组件上 所以要父子传值给编辑频道组件 -->
     <!-- 传递activeIndex改变当前页前颜色 -->
-    <ChannelEdit :activeIndex='activeIndex' :channels='channels' @selectChannel='selectChannel'>
+    <ChannelEdit @delChannel='delChannel'  :activeIndex='activeIndex' :channels='channels' @selectChannel='selectChannel'>
 
     </ChannelEdit>
   </van-action-sheet>
@@ -50,7 +50,7 @@
 <script>
 import ArticleList from './components/article-list'// 文章列表组件
 import MoreAction from './components/more-action' // 引入反馈弹层组件
-import { getMyChannels } from '@/api/channels'
+import { getMyChannels, delChannel } from '@/api/channels'
 import { dislikeArticle, reportArticle } from '@/api/articles'// 调用不感兴趣接口方法和举报文章方法
 import eventbus from '@/utils/eventbus'// 公共事件处理器
 import ChannelEdit from './components/channel-edit'// 引入编辑频道组件
@@ -69,6 +69,26 @@ export default {
     }
   },
   methods: {
+    async delChannel (id) {
+      // 当子组件触发delChannel删除事件时 触发
+      // alert(id)
+      // 此时应该先调用api
+      try {
+        await delChannel(id)// 调用api方法  此时只是删除了 缓存中的数据
+        // 如果此时成功的resolve了 我们 应该去移除 当前data中的数据
+        const index = this.channels.findIndex(item => item.id === id) // 找到对应的索引
+        // 找到对应的索引之后
+        // 要根据当前删除的索引 和 当前激活的索引的 关系 来 决定 当前激活索引是否需要改变
+        if (index <= this.activeIndex) {
+          //  如果你删除的索引 是在当前激活索引之前的 或者等于当前激活索引的
+          // 此时就要把激活索引 给往前挪一位
+          this.activeIndex = this.activeIndex - 1
+        }
+        this.channels.splice(index, 1) // 删除对应的索引频道
+      } catch (error) {
+        this.$znotify({ message: '删除频道失败' })
+      }
+    },
     selectChannel (index) {
       // 当子组件触发selectChannel事件时 触发
       // alert(id)
