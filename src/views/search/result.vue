@@ -9,7 +9,8 @@
     <van-list v-model="upLoading" :finished='finished' @load="onLoad">
       <van-cell-group>
         <!-- 有可能是大数字类型 做转换 -->
-        <van-cell v-for="item in articles" :key="item.art_id.toString()">
+        <!-- 给van-cell加一个to属性 就可以跳转到对应的页面 -->
+        <van-cell :to='`/article?artId=${item.art_id.toString()}`' v-for="item in articles" :key="item.art_id.toString()">
           <div class="article_item">
             <h3 class="van-ellipsis">{{item.title}}</h3>
             <div class="img_box">

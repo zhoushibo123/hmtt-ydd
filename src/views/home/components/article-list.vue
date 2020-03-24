@@ -16,7 +16,8 @@
       <!-- 循环内容 -->
         <van-cell-group>
           <!--item.art_id此时是一个大数字对象  -->
-          <van-cell v-for="item in articles" :key="item.art_id.toString()">
+          <!-- 给van-cell加一个to属性 就可以跳转到对应的页面 -->
+          <van-cell :to='`/article?artId=${item.art_id.toString()}`' v-for="item in articles" :key="item.art_id.toString()">
             <!-- 放置元素 文章列表的循环项  无图  单图  三图 -->
             <div class="article_item">
               <!-- 标题 -->
@@ -47,7 +48,8 @@
                 <!-- <span class="close" v-if="$store.state.user.token"> -->
                   <!-- 辅助函数形式 -->
                   <!-- 点击叉号显示弹层 在子组件article-list中点击叉号 在父组件index中的弹层显示 -->
-                  <span @click="$emit('ShowArticle',item.art_id.toString())" class="close" v-if="user.token">
+                  <!-- 阻止冒泡 -->
+                  <span @click.stop="$emit('ShowArticle',item.art_id.toString())" class="close" v-if="user.token">
                   <van-icon name="cross"></van-icon>
                 </span>
               </div>
