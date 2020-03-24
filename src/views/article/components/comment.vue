@@ -1,10 +1,10 @@
 <template>
   <div class="comment">
-      <!-- 列表组件 可以实现上拉加载 -->
+      <!-- 列表组件 上拉加载 评论是不能一口气加载完的 -->
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <!-- 循环项 -->
-      <!-- <div class="item van-hairline--bottom van-hairline--top" v-for="comment in comments" :key="comment.com_id.toString()"> -->
-          <div class="item van-hairline--bottom van-hairline--top" v-for="comment in comments" :key="comment.com_id.toString()">
+        <!-- 评论列表 -->
+      <div class="item van-hairline--bottom van-hairline--top" v-for="comment in comments" :key="comment.com_id.toString()">
+        <!-- 用户头像 -->
         <van-image
           round
           width="1rem"
@@ -14,7 +14,8 @@
         />
         <div class="info">
           <p>
-            <span class="name">{{comment.aut_name}}</span>
+            <!-- 用户名称 -->
+            <span class="name">{{ comment.aut_name }}</span>
             <span style="float:right">
               <span class="van-icon van-icon-good-job-o zan"></span>
               <span class="count">{{ comment.like_count }}</span>
@@ -22,30 +23,33 @@
           </p>
           <p>{{ comment.content }}</p>
           <p>
+            <!-- 时间  过滤器 过滤 -->
             <span class="time">{{ comment.pubdate | relTime }}</span>&nbsp;
-            <!-- 点击回复标签 弹出面板  还要处理许多业务-->
-            <van-tag plain @click="openReply()">{{comment.reply_count}} 回复</van-tag>
+            <!-- 点击回复标签 弹出面板 而且要处理很多业务 -->
+            <van-tag plain @click="openReply(comment.com_id.toString())">{{ comment.reply_count }} 回复</van-tag>
           </p>
         </div>
       </div>
+
     </van-list>
-     <!-- 输入框 -->
+    <!-- 底部输入框 用来输入评论的 -->
     <div class="reply-container van-hairline--top">
-        <!-- 绑定输入内容 -->
+        <!-- 绑定了评论内容 -->
       <van-field v-model="value" placeholder="写评论...">
         <van-loading v-if="submiting" slot="button" type="spinner" size="16px"></van-loading>
         <span class="submit" v-else slot="button">提交</span>
       </van-field>
     </div>
-    <!-- 放置回复面板 -->
+    <!-- 放置评论的评论 弹出面板 -->
       <van-action-sheet v-model="showReply" :round="false" class="reply_dialog" title="回复评论">
-      <van-list v-model="reply.loading" :finished="reply.finished" finished-text="没有更多了">
-        <div class="item van-hairline--bottom van-hairline--top" v-for="index in 8" :key="index">
-          <van-image round width="1rem" height="1rem" fit="fill" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+      <!-- 列表组件  关闭第一次自动执行load事件-->
+      <van-list @load="getReply" :immediate-check="false" v-model="reply.loading" :finished="reply.finished" finished-text="没有更多了">
+        <div class="item van-hairline--bottom van-hairline--top" v-for="item in reply.list" :key="item.com_id.toString()">
+          <van-image round width="1rem" height="1rem" fit="fill" :src="item.aut_photo" />
           <div class="info">
-            <p><span class="name">一阵清风</span></p>
-            <p>评论的内容，。。。。</p>
-            <p><span class="time">两天内</span></p>
+            <p><span class="name">{{  item.aut_name }}</span></p>
+            <p>{{ item.content }}</p>
+            <p><span class="time">{{ item.pubdate | relTime }}</span></p>
           </div>
         </div>
       </van-list>
@@ -64,26 +68,36 @@ export default {
       loading: false,
       // 全部加载完毕
       finished: false,
-      // 输入的内容
+      // 输入的评论内容
       value: '',
       // 控制提交中状态数据
       submiting: false,
-      comments: [], // 接收评论
-      offset: null, // 表示分页依据 如果为空,表示从第一页开始
+      comments: [], // 神评论数据
+      offset: null, // 偏移量 分页依据 第一页数据 null 第二页数据 offset  第一页最后一个id ...
       showReply: false, // 控制评论的评论面板是否显示
       reply: {
         // 此对象专门放置 面板加载信息
         loading: false, // 评论的评论的加载状态
         finished: false, // 评论的评论是否加载完毕
         offset: null, // 偏移量 作为评论的评论分页加载的时候 查询的依据
-        list: [] // 存放 评论的评论的数据
+        list: [], // 存放 评论的评论的数据
+        commentId: null // 用来存放评论Id  用这个id来去查询 这个评论的评论
       }
     }
   },
   methods: {
-    openReply () {
-      //   打开回复面板
+    openReply (commentId) {
+      //   打开回复面板 只会在点击回复时调用一次
       this.showReply = true
+      //   处理传过来的id 赋值给data中
+      this.reply.commentId = commentId
+      //   先把之前的数据清空 再重新拉去最新的 重置数据
+      this.reply.list = []
+      this.reply.offset = null// 因为希望点击弹出回复面板的时候 是新的数据 从第一页开始
+      this.reply.finished = false// 手动打开
+      this.reply.loading = true // 主动打开加载状态 因为此时没有 主动检查
+
+      this.getReply() // 弹出评论的评论的层时 主动的去请求一次数据
     },
     async  onLoad () {
       //   加载方法 滚动条距离底部超过一定距离就会执行
@@ -105,6 +119,23 @@ export default {
         // 表示 还没没结束
         // data.last_id是 当前页的最后一个id 查询下一页数据
         this.offset = data.last_id
+      }
+    },
+    async getReply () {
+      // 此方法用来获取回复的数据
+    //   此方法也会在第二页第三页第四页时执行
+      const data = await articles.getComments({
+        type: 'c', // a 表示文章评论  c 表示回复的评论
+        source: this.reply.commentId, // 获取谁的评论的id
+        offset: this.reply.offset// 评论的评论的分页依据
+      })
+      //   将数据追加到队尾
+      this.reply.list.push(...data.results)
+      this.reply.loading = false// 关闭加载状态
+      this.reply.finished = data.last_id === data.end_id // 如果它俩相等 表示 game over
+      if (!this.reply.finished) {
+        // 如果不等 表示还有下一页数据
+        this.reply.offset = data.last_id // 将下一页的分页依据设置给当前的数据
       }
     }
   }
