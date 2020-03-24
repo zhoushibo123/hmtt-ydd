@@ -19,6 +19,8 @@
         <van-button round size="small" :class="{ active:article.attitude===1}" class="active" plain icon="like-o">点赞</van-button>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <van-button round size="small" :class="{ active:article.attitude===0}" plain icon="delete">不喜欢</van-button>
+         <!--放置comment组件 到 detail内部 因为有padding  -->
+      <Comment></Comment>
       </div>
       <!-- 放置遮罩层 -->
       <!-- 当前文章加载在状态 -->
@@ -29,8 +31,7 @@
         </div>
 
       </van-overlay>
-      <!--放置comment组件 到 detail内部 因为有padding  -->
-      <Comment></Comment>
+
     </div>
 
   </div>
