@@ -29,6 +29,8 @@
         </div>
 
       </van-overlay>
+      <!--放置comment组件 到 detail内部 因为有padding  -->
+      <Comment></Comment>
     </div>
 
   </div>
@@ -37,8 +39,11 @@
 <script>
 import { getArticleInfo } from '@/api/articles'// 引入获取文章详情的方法
 import { followUser, unFollowUser } from '@/api/user'// 引入关注/取消关注方法
-
+import Comment from './components/comment' // 引入评论组件
 export default {
+  components: {
+    Comment
+  },
   data () {
     return {
       article: {}, // 用来接收文章详情数据
@@ -125,6 +130,7 @@ export default {
     position:sticky;
     background-color: #fff;
     top:46px;
+    z-index: 2;
     .text {
       flex: 1;
       padding-left: 10px;
