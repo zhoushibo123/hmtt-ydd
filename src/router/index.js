@@ -58,7 +58,7 @@ const routes = [
     component: result
   },
   { // 一级路由 文章详情
-    path: 'article',
+    path: '/article',
     component: article
   }
 ]
