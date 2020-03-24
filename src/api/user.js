@@ -30,3 +30,20 @@ export function login (data) {
   })
   // 返回一个promise对象
 }
+
+// 关注用户
+export function followUser (data) {
+  return request({
+    url: '/user/followings', // 关注用户
+    method: 'post',
+    data
+  })
+}
+
+// 取消关注
+export function unFollowUser (target) {
+  return request({
+    method: 'delete',
+    url: `/user/followings/${target}`/// user/followings/:target
+  })
+}
