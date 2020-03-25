@@ -73,3 +73,12 @@ export function getComments (params) {
     //  查第三页的数据  传第二页最后一个id ....
   })
 }
+
+// 文章评论和回复评论的方法两种场景 文章评论和回复评论
+export function commentOrReply (data) {
+  return request({
+    url: '/comments',
+    method: 'post',
+    data
+  })
+}
