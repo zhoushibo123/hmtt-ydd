@@ -120,14 +120,14 @@ export default {
             this.reply.list.unshift(data.new_obj)
             // 如果对评论进行评论 需要找到对应的评论id 将回复数+1
             // 通过devtos插件 查看comment组件
-            const comment = this.comments.find(item => item.com_id.toString() === this.reply.commentId)
+            const aa = this.comments.find(item => item.com_id.toString() === this.reply.commentId)
 
             // 当前评论id的id 找到就将回复数量+1
             // 寻找文章评论中 等于 当前评论id的id
-            comment && comment.reply_count++ // 如果找到就将 回复数量+1
-            // if (aa) {
-            //   this.comment.reply_count++
-            // }
+            // comment && comment.reply_count++ // 如果找到就将 回复数量+1
+            if (aa) {
+              aa.reply_count++
+            }
           } else {
             // 如果不存在表示对文章进行评论
             this.comments.unshift(data.new_obj)
