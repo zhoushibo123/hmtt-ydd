@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <van-nav-bar left-arrow @click-left="$router.back()" title="编辑资料" right-text="保存"></van-nav-bar>
+    <van-nav-bar left-arrow @click-left="$router.back()" title="编辑资料"  @click-right="saveUser" right-text="保存"></van-nav-bar>
     <van-cell-group>
       <van-cell is-link title="头像" center>
         <van-image
@@ -9,6 +9,7 @@
           height="1.5rem"
           fit="cover"
           round
+          @click="showPhoto=true"
           :src="user.photo"
         />
       </van-cell>
@@ -21,7 +22,8 @@
       <!-- 内容 -->
       <!-- 1 本地相册选择图片 -->
       <!-- 2 拍照 -->
-      <van-cell is-link title="本地相册选择图片"></van-cell>
+      <!-- 注册点击事件 -->
+      <van-cell @click="openFile" is-link title="本地相册选择图片"></van-cell>
       <van-cell is-link title="拍照"></van-cell>
     </van-popup>
     <!-- 放置昵称弹层 -->
@@ -46,12 +48,16 @@
         @confirm="confirmDate"
       />
     </van-popup>
+     <!-- 放置一个input用来上传头像 不能让人看到 -->
+     <!-- vue通过ref获取DOM对象 -->
+     <!-- 上传了文件就触发了change事件 -->
+  <input @change="upload" ref="myFile" type="file"  style="display:none">
   </div>
 </template>
 
 <script>
 import dayjs from 'dayjs'
-import { getUserProfile } from '@/api/user'
+import { getUserProfile, updatePhoto, saveUserInfo } from '@/api/user'
 export default {
   data () {
     return {
@@ -77,6 +83,33 @@ export default {
     }
   },
   methods: {
+    async saveUser () {
+      // 获取用户信息
+      try {
+        await saveUserInfo(this.user) // 传入user对象
+        this.$znotify({ type: 'success', message: '保存成功' })
+      } catch (error) {
+        this.$znotify({ message: '保存失败' })
+      }
+    },
+    openFile () {
+      // 打开选择的文件的对话框 触发input file的动作
+      this.$refs.myFile.click()// 触发事件就会弹出对话框
+    },
+    async  upload (params) {
+      // input的change事件
+      // 当选择完成后就可以修改头像了
+      // 调接口
+      // 因为是formdata格式
+      // console.dir(this.$refs.myFile)
+      // // debugger
+      const data = new FormData()
+      data.append('photo', this.$refs.myFile.files[0])
+      const result = await updatePhoto(data)// 上传头像
+      // 把头像显示在页面上
+      this.user.photo = result.photo
+      this.showPhoto = false
+    },
     btnName () {
       // 关闭昵称弹层的方法
       // 做个限制
