@@ -58,6 +58,7 @@
 <script>
 import dayjs from 'dayjs'
 import { getUserProfile, updatePhoto, saveUserInfo } from '@/api/user'
+import { mapMutations } from 'vuex'
 export default {
   data () {
     return {
@@ -83,6 +84,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updataPhoto']), // 引入更新头像的方法
     async saveUser () {
       // 获取用户信息
       try {
@@ -108,6 +110,8 @@ export default {
       const result = await updatePhoto(data)// 上传头像
       // 把头像显示在页面上
       this.user.photo = result.photo
+      // 修改成功之后也需要把头像设置给vuex
+      this.updatePhoto({ photo: result.photo })
       this.showPhoto = false
     },
     btnName () {

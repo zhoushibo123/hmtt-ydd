@@ -7,8 +7,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // 专门用来放置共享状态
-    user: auth.getUser() // user预设用来放置token 和refresh_token  做持久化 如果缓存中有 读取缓存中的的数据
-
+    user: auth.getUser(), // user预设用来放置token 和refresh_token  做持久化 如果缓存中有 读取缓存中的的数据
+    photo: null// 用户头像
   },
   mutations: {
     // 要修改state里的token只能通过mtations
@@ -23,6 +23,10 @@ export default new Vuex.Store({
       state.user = {}// 将vuex中token设置为空对象 因为在auth.js 中getUser的时候如果token为空也赋值给他一个空对象
       // 缓存的数据也要更新
       auth.delUser()// 调用auth中的delUser方法 删除本地token
+    },
+    // 更新用户头像
+    updataPhoto (state, payload) {
+      state.photo = payload.photo// 在载荷中传入photo
     }
   },
   actions: {

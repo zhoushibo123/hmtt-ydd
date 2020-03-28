@@ -55,10 +55,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['delUser']), // 引入删除token方法
+    ...mapMutations(['delUser', 'updataPhoto']), // 引入删除token方法和更新头像的方法
     async getUserInfo () {
       // 用户个人信息赋值给data中的变量
       this.userInfo = await getUserInfo()
+      // 获取了用户信息
+      this.updataPhoto({ photo: this.userInfo.photo })// 用mutation来设置头像
     },
     async lgout () {
       // 登出操作

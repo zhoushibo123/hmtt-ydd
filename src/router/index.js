@@ -23,7 +23,7 @@ const routes = [
     name: 'Home',
     component: Layout, // 布局组件一级路由
     children: [{
-      path: '', // path什么都不写 就是摩尔恩二级路由的默认组件
+      path: '', // path什么都不写 就是二级路由的默认组件
       component: home
     }, {
       path: '/question',
