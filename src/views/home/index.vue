@@ -2,7 +2,7 @@
   <div class="container">
       <!-- 放置tabs组件 -->
       <!-- v-model绑定当前激活的页签 -->
-      <van-tabs v-model="activeIndex">
+      <van-tabs v-model="activeIndex" @change="changeTab">
          <!-- 内部需要放置子 标签  title值为当前显示的内容-->
          <!-- van-tab是vant组件的样式  -->
          <van-tab :title="item.name" v-for="item in channels" :key="item.id">
@@ -69,6 +69,12 @@ export default {
     }
   },
   methods: {
+    changeTab () {
+      // 切换tab页签事件
+      // 切换页签时我要广播一个消息 让对应页签的滚动条滚动到对应的位置
+      // 广播传出一个参数 当前的激活索引
+      eventbus.$emit('changeTab', this.channels[this.activeIndex].id)
+    },
     async  addChannel (channel) {
       // 添加频道的方法 触发子组件addChannel事件时触发
       // 调接口

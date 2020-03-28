@@ -6,7 +6,14 @@
         <!-- <van-icon name="search" /> -->
         <!-- 二级路由容器 -->
         <div class="my-wrapper" :class="{noTop : $route.path==='/user'}">
-        <router-view></router-view>
+
+       <!-- 如果想要缓存的二级路由组件的话 可以直接缓存二级路由容器
+        如果缓存了这个容器 表示 这个容器下的所有的组件都会被缓存
+       -->
+       <keep-alive>
+         <!-- 用keep-alive包裹路由容器 -->
+         <router-view></router-view>
+       </keep-alive>
         </div>
 
       <!-- 标签栏组件route开启路由模式相当于router-link -->
